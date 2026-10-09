@@ -73,26 +73,26 @@ async function getDashboardData(esUrl = ES_DEFAULT) {
   };
 }
 
-module.exports = {
-  getDashboardData,
-  handler: async function (req, res) {
-    try {
-      const data = await getDashboardData();
-      res.setHeader("Cache-Control", "no-store");
-      res.setHeader("Content-Type", "application/json");
-      if (typeof res.status === "function") {
-        return res.status(200).json(data);
-      } else {
-        res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(JSON.stringify(data));
-      }
-    } catch (e) {
-      if (typeof res.status === "function") {
-        return res.status(502).json({ error: e.message });
-      } else {
-        res.writeHead(502, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ error: e.message }));
-      }
+async function handler(req, res) {
+  try {
+    const data = await getDashboardData();
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("Content-Type", "application/json");
+    if (typeof res.status === "function") {
+      return res.status(200).json(data);
+    } else {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(data));
+    }
+  } catch (e) {
+    if (typeof res.status === "function") {
+      return res.status(502).json({ error: e.message });
+    } else {
+      res.writeHead(502, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: e.message }));
     }
   }
-};
+}
+
+module.exports = handler;
+module.exports.getDashboardData = getDashboardData;
